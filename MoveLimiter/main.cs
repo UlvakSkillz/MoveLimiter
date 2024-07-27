@@ -1,9 +1,11 @@
 ﻿using MelonLoader;
-using RUMBLE.Managers;
-using RUMBLE.Players.Subsystems;
-using RUMBLE.Poses;
+using Il2CppRUMBLE.Managers;
+using Il2CppRUMBLE.Players.Subsystems;
+using Il2CppRUMBLE.Poses;
 using System.Collections;
 using UnityEngine;
+using RumbleModUI;
+using System.Collections.Generic;
 
 namespace MoveLimiter
 {
@@ -12,12 +14,39 @@ namespace MoveLimiter
         private bool sceneChanged = false;
         private string currentScene = "";
         int sceneChangeCount = 0;
+        UI UI = UI.instance;
+        private Mod MoveLimiter = new Mod();
+        private List<PoseInputSource> storedMoves = new List<PoseInputSource>();
+        bool inAMatch = false;
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             currentScene = sceneName;
             sceneChanged = true;
+            inAMatch = false;
             sceneChangeCount++;
+        }
+
+        public override void OnLateInitializeMelon()
+        {
+            MoveLimiter.ModName = "MoveLimiter";
+            MoveLimiter.ModVersion = "2.1.3";
+            MoveLimiter.SetFolder("MoveLimiter");
+            MoveLimiter.AddDescription("Description", "Description", "Disables Moves your opponent can't use.", new Tags { IsSummary = true });
+            MoveLimiter.AddToList("Active", true, 0, "Grey Box Turns Off MoveLimiter", new Tags { });
+            MoveLimiter.GetFromFile();
+            MoveLimiter.ModSaved += Save;
+            UI.instance.UI_Initialized += UIInit;
+        }
+
+        public void UIInit()
+        {
+            UI.AddMod(MoveLimiter);
+        }
+
+        public void Save()
+        {
+            UpdateAvailableMoves();
         }
 
         public override void OnFixedUpdate()
@@ -29,6 +58,37 @@ namespace MoveLimiter
                     MelonCoroutines.Start(WaitASecondBeforePlayerCheck(sceneChangeCount));
                 }
                 sceneChanged = false;
+            }
+        }
+
+        private void UpdateAvailableMoves()
+        {
+            if (inAMatch)
+            {
+                if ((bool)MoveLimiter.Settings[1].SavedValue)
+                {
+                    ChangeAvailableMoves(PlayerManager.instance.AllPlayers[1].Data.GeneralData.BattlePoints);
+                }
+                else
+                {
+                    string restoredMoves = "";
+                    for (int i = 0; i < storedMoves.Count; i++)
+                    {
+                        Il2CppSystem.Collections.Generic.List<PoseInputSource> activePoses = PlayerManager.instance.localPlayer.Controller.gameObject.transform.GetComponentInChildren<PlayerPoseSystem>().currentInputPoses;
+                        if (restoredMoves != "")
+                        {
+                            restoredMoves += ", ";
+                        }
+                        restoredMoves += storedMoves[i].poseSet.name;
+                        activePoses.Add(storedMoves[i]);
+                        storedMoves.RemoveAt(i);
+                        i--;
+                    }
+                    if (restoredMoves != "")
+                    {
+                        MelonLogger.Msg("Restored Moves: " + restoredMoves);
+                    }
+                }
             }
         }
 
@@ -53,7 +113,11 @@ namespace MoveLimiter
             {
                 if (PlayerManager.instance.AllPlayers.Count == 2)
                 {
-                    ChangeAvailableMoves(PlayerManager.instance.AllPlayers[1].Data.GeneralData.BattlePoints);
+                    inAMatch = true;
+                    if ((bool)MoveLimiter.Settings[1].SavedValue)
+                    {
+                        ChangeAvailableMoves(PlayerManager.instance.AllPlayers[1].Data.GeneralData.BattlePoints);
+                    }
                 }
             }
         }
@@ -113,11 +177,15 @@ namespace MoveLimiter
                         poseList += ", ";
                     }
                     poseList += activePoses[i].poseSet.name;
+                    storedMoves.Add(activePoses[i]);
                     activePoses.RemoveAt(i);
                     i--;
                 }
             }
-            MelonLogger.Msg($"Facing {beltRankFound}, Removing Poses: {poseList}");
+            if (poseList != "")
+            {
+                MelonLogger.Msg($"Facing {beltRankFound}, Removing Poses: {poseList}");
+            }
         }
     }
 }
