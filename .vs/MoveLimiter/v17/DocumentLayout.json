@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\austi\\source\\repos\\MoveLimiter\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B1F33F41-50C5-4621-B6E4-55DF6D828814}|MoveLimiter\\MoveLimiter.csproj|c:\\users\\austi\\source\\repos\\movelimiter\\movelimiter\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B1F33F41-50C5-4621-B6E4-55DF6D828814}|MoveLimiter\\MoveLimiter.csproj|solutionrelative:movelimiter\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cs",
+              "DocumentMoniker": "C:\\Users\\austi\\source\\repos\\MoveLimiter\\MoveLimiter\\main.cs",
+              "RelativeDocumentMoniker": "MoveLimiter\\main.cs",
+              "ToolTip": "C:\\Users\\austi\\source\\repos\\MoveLimiter\\MoveLimiter\\main.cs",
+              "RelativeToolTip": "MoveLimiter\\main.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-24T19:29:12.305Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
